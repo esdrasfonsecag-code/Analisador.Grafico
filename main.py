@@ -1,53 +1,28 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
 
-# Criando a aplicação FastAPI
-app = FastAPI(title="Analisador Gráfico")
+app = FastAPI()
 
-# Configuração de CORS (opcional, útil para front-end)
-origins = [
-    "*",  # Permite qualquer origem, se for para produção, restringir
-]
-
+# Permitir que o front-end acesse a API
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],  # ou coloque a URL do seu front-end
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# -----------------------
-# Modelos de dados
-# -----------------------
-class AnaliseRequest(BaseModel):
-    time_a: str
-    time_b: str
-    estatisticas: dict
-
-# -----------------------
-# Rotas
-# -----------------------
-
-# Rota raiz
-@app.get("/")
-def raiz():
+# Rota da API
+@app.get("/api")
+def read_root():
     return {"mensagem": "API funcionando!"}
 
-# Exemplo de rota de análise
-@app.post("/analisar")
-def analisar(request: AnaliseRequest):
-    # Aqui você pode colocar sua lógica de análise
-    # Por enquanto, apenas retorna os dados recebidos
-    resultado = {
-        "time_a": request.time_a,
-        "time_b": request.time_b,
-        "chance_over_2_5": 92  # Exemplo fixo
-    }
-    return resultado
+# Servindo arquivos estáticos (CSS, JS, imagens)
+app.mount("/static", StaticFiles(directory="."), name="static")
 
-# Rota de teste simples
-@app.get("/status")
-def status():
-    return {"status": "online"}
+# Servindo o front-end principal
+@app.get("/")
+def serve_front():
+    return FileResponse("index.html")
