@@ -1,5 +1,4 @@
 import joblib
-import numpy as np
 from xgboost import XGBClassifier
 from data_handler import load_model, save_model
 
@@ -17,10 +16,10 @@ class FootballAIPro:
 
     def update_model(self, X_new, y_new):
         """
-        Treina incrementalmente: concatena com histórico para manter aprendizado
+        Treinamento incremental (usando dados recentes)
         """
         self.model.fit(X_new, y_new)
         save_model(self.model)
 
     def predict(self, X):
-        return self.model.predict_proba(X)[:, 1]  # probabilidade de over 2.5
+        return self.model.predict_proba(X)[:, 1]
