@@ -6,5 +6,9 @@ data/historical.csv
 data/model.pkl
 *.log
 *.tmp
+*.bak
+*.swp
+*.cache
 .ipynb_checkpoints/
 .DS_Store
+.render/
